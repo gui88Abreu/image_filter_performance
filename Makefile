@@ -1,3 +1,32 @@
+# Macros para compilacao
+CC = gcc
+CFLAGS = -Wextra -lpthread
+FREEIMAGEFLAGS = -lfreeimage
+DIR = src
+DIR_IMAGES = filtered_images
+TARGET = main
+SRCS := $(shell find $(DIR) -name '*.c')
+OBJS = $(SRCS:.c=.o)
 
-main:
-	gcc -omain main.c imageprocessing.c -I./ -lfreeimage
+
+# Macros para teste
+BASH = python3
+TEST_SCRIPT = test.py
+
+.PHONY: depend clean
+
+all:$(TARGET)
+
+$(TARGET):$(OBJS)
+	$(CC) -o$(TARGET) $(OBJS) $(CFLAGS) $(FREEIMAGEFLAGS)
+
+%.o:%.c
+	$(CC) $(CFLAGS) $(FREEIMAGEFLAGS) -c $< -o $@
+
+test:all
+	$(BASH) $(TEST_SCRIPT) $(TARGET)
+
+clean:
+	$(RM) ./$(TARGET)
+	$(RM) $(DIR)/*.o
+	$(RM) $(DIR_IMAGES)/*.
