@@ -1,16 +1,16 @@
 
-#include <imageprocessing.h>
+#include "imageprocessing.h"
 
 
 int main() {
   imagem img;
-  img = abrir_imagem("data/cachorro.jpg");
+  img = abrir_imagem((char*)"data/cachorro.jpg");
   unsigned int tmp;
 
   float alpha = 0.998;
 
-  for (int i=0; i<(img.width); i++) {
-    for (int j=0; j<(img.height); j++) {
+  for (unsigned int i=0; i<(img.width); i++) {
+    for (unsigned int j=0; j<(img.height); j++) {
       /* Ganho no canal R */
       tmp = img.r[j*img.width + i] * 2;
       if (tmp > 255) tmp=255;
@@ -27,7 +27,7 @@ int main() {
     }
   }
 
-  salvar_imagem("cachorro-out.jpg", &img);
+  salvar_imagem((char*)"cachorro-out.jpg", &img);
   liberar_imagem(&img);
   return 0;
 }

@@ -4,8 +4,6 @@
 
 #include "imageprocessing.h"
 
-#include <FreeImage.h>
-
 /*
 imagem abrir_imagem(char *nome_do_arquivo);
 void salvar_imagem(char *nome_do_arquivo);
@@ -31,9 +29,9 @@ imagem abrir_imagem(char *nome_do_arquivo) {
 
   I.width = x;
   I.height = y;
-  I.r = malloc(sizeof(float) * x * y);
-  I.g = malloc(sizeof(float) * x * y);
-  I.b = malloc(sizeof(float) * x * y);
+  I.r = (float*)malloc(sizeof(float) * x * y);
+  I.g = (float*)malloc(sizeof(float) * x * y);
+  I.b = (float*)malloc(sizeof(float) * x * y);
 
    for (int i=0; i<x; i++) {
      for (int j=0; j <y; j++) {
@@ -64,8 +62,8 @@ void salvar_imagem(char *nome_do_arquivo, imagem *I) {
   printf("Salvando imagem %d por %d...\n", I->width, I->height);
   bitmapOut = FreeImage_Allocate(I->width, I->height, 24, 0, 0, 0);
 
-   for (int i=0; i<I->width; i++) {
-     for (int j=0; j<I->height; j++) {
+   for (unsigned int i=0; i<I->width; i++) {
+     for (unsigned int j=0; j<I->height; j++) {
       int idx;
 
       idx = i + (j*I->width);

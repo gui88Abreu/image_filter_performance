@@ -2,6 +2,7 @@
 #ifndef IMAGEPROCESSING_H
 #define IMAGEPROCESSING_H
 
+#include <FreeImage.h>
 
 typedef struct {
   unsigned int width, height;
