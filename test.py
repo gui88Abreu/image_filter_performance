@@ -20,7 +20,7 @@ if len(test_list) == 0:
   quit('There is no test files')
 
 for test in test_list:
-  print('Image: ' + test)
+  print('Test Image: ' + test)
   system('time ./'+program_target + ' ' + test)
 
 system('rm -f ' + temp_file)
