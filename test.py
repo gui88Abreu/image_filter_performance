@@ -21,6 +21,6 @@ if len(test_list) == 0:
 
 for test in test_list:
   print('Image: ' + test)
-  system('time ./'+program_target+'<'+test)
+  system('time ./'+program_target + ' ' + test)
 
 system('rm -f ' + temp_file)

@@ -1,14 +1,17 @@
-
+#include <string.h>
 #include "imageprocessing.h"
 
 
-int main() {
+int main(int argc, char *argv[]){
   imagem img;
-  img = abrir_imagem((char*)"data/cachorro.jpg");
   unsigned int tmp;
-
+  char output[50] = "filtered_images/";
+  char input[50] = "images/";
   float alpha = 0.998;
 
+  strcat(input, argv[1]);
+  strcat(output, argv[1]);
+  img = abrir_imagem(input);
   for (unsigned int i=0; i<(img.width); i++) {
     for (unsigned int j=0; j<(img.height); j++) {
       /* Ganho no canal R */
@@ -27,7 +30,7 @@ int main() {
     }
   }
 
-  salvar_imagem((char*)"cachorro-out.jpg", &img);
+  salvar_imagem(output, &img);
   liberar_imagem(&img);
   return 0;
 }
