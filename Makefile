@@ -29,4 +29,4 @@ test:all
 clean:
 	$(RM) ./$(TARGET)
 	$(RM) $(DIR)/*.o
-	$(RM) $(DIR_IMAGES)/*
+	$(RM) $(DIR_IMAGES)/*.jpg
