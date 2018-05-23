@@ -1,36 +1,37 @@
 #include <string.h>
+#include <stdlib.h>
 #include "imageprocessing.h"
 
+#define N 10
+
+void initialize_img(imagem *, unsigned int, unsigned int);
 
 int main(int argc, char *argv[]){
-  imagem img;
-  unsigned int tmp;
+  imagem img, output_img;
   char output[50] = "filtered_images/";
   char input[50] = "images/";
-  float alpha = 0.998;
 
   strcat(input, argv[1]);
   strcat(output, argv[1]);
+
   img = abrir_imagem(input);
-  for (unsigned int i=0; i<(img.width); i++) {
-    for (unsigned int j=0; j<(img.height); j++) {
-      /* Ganho no canal R */
-      tmp = img.r[j*img.width + i] * 2;
-      if (tmp > 255) tmp=255;
-      img.r[j*img.width + i] = tmp;
-
-      /* Reducao no canal B */
-      img.b[j*img.width + i] /= 2;
-
-      /* Blur exponencial no canal G */
-      if (i!=0) {
-        img.g[j*img.width + i] = (1-alpha)*img.g[j*img.width + i] +(alpha)* img.g[j*img.width + i -1];
-      }
-
+  initialize_img(&output_img, img.width, img.height);
+  for (unsigned int i=0; i < img.height; i++) {
+    for (unsigned int j=0; j < img.width; j++) {
+      mean_value(img, N, i, j, &output_img);
     }
   }
 
-  salvar_imagem(output, &img);
+  salvar_imagem(output, &output_img);
   liberar_imagem(&img);
+  liberar_imagem(&output_img);
   return 0;
+}
+
+void initialize_img(imagem *img, unsigned int width, unsigned int height){
+  img->width = width;
+  img->height = height;
+  img->r = (float*)malloc(sizeof(float) * width * height);
+  img->g = (float*)malloc(sizeof(float) * width * height);
+  img->b = (float*)malloc(sizeof(float) * width * height);
 }
