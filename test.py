@@ -6,8 +6,7 @@ import sys
 import re
 
 def yield_datas(line):
-  user, sys, real, cpu, garbage = line.split(' ', 4)
-  garbage = None
+  user, sys, real, cpu, line = line.split(' ', 4)
 
   regex = re.compile('[0-9]+[.][0-9]+')
   user = regex.findall(user)
