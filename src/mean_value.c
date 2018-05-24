@@ -20,9 +20,10 @@ void mean_value(imagem img, int N, unsigned int i, unsigned int j, imagem *outpu
       b += img.b[y*img.width + x];
     }
   }
-  if (N == 0) N = 1;
-  output->r[i*output->width + j] = r/(float)(N*N);
-  output->g[i*output->width + j] = g/(float)(N*N);
-  output->b[i*output->width + j] = b/(float)(N*N);
+  N = 2*N + 1;
+  N = N*N;
+  output->r[i*output->width + j] = r/(float)N;
+  output->g[i*output->width + j] = g/(float)N;
+  output->b[i*output->width + j] = b/(float)N;
   return; 
 }
