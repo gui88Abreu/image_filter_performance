@@ -40,7 +40,7 @@ for i in range(len(test_list)):
   test_list[i] = test_list[i].replace('\n', '')
   print(60*'-')
   print('Test Image: ' + test_list[i])
-  system('/usr/bin/time -o '+ log_file + ' --append ./'+program_target + ' ' + test_list[i])
+  system('/usr/bin/time -o '+ log_file + ' --append ./'+program_target + ' ' + test_list[i] + ' 0')
 print(60*'-')
 file = open(log_file, 'r')
 
