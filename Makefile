@@ -28,5 +28,5 @@ test:all
 
 clean:
 	$(RM) ./$(TARGET)
-	$(RM) $(DIR)/*.o
-	$(RM) $(DIR_IMAGES)/*.jpg
+	$(RM) $(DIR)/*.o ./*.csv
+	$(RM) $(DIR_IMAGES)/*.jpg $(DIR_IMAGES)/*.jpeg
