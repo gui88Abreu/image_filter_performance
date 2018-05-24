@@ -59,6 +59,7 @@ void threading_method(imagem *img, imagem *output_img){
     pthread_join(thread[i], NULL);
   }
 
+  free(tasks);
   return;
 }
 
