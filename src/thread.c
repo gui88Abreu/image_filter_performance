@@ -21,13 +21,13 @@ void *worker(void *arg){
       pthread_mutex_unlock(&key);
       break;
     }
-    
+
     /* marca tarefa como realizada*/
     buffer->pixel[i*width + j] = 1;
     pthread_mutex_unlock(&key);
 
     /* realiza tarefa*/
-    mean_value(buffer->input, buffer->N_blur, i, j, buffer->output);
+    aply_blur(buffer->input, buffer->N_blur, i, j, buffer->output);
     if (j == width)
       j = 0;
   }

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "imageprocessing.h"
 
-void mean_value(imagem *img, int N, unsigned int i, unsigned int j, imagem *output){
+void aply_blur(imagem *img, int N, unsigned int i, unsigned int j, imagem *output){
   int Yi = i-N, Yf = i+N;
   int Xi = j-N, Xf = j+N;
   float r, g , b;
