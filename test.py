@@ -5,8 +5,8 @@ import sys
 
 def yield_table(time_file, Name):
   file = open(time_file, 'r')
-
   line = file.readlines()
+  file.close()
 
   system('rm -f ' + time_file)
 
@@ -49,7 +49,7 @@ if len(test_list) == 0:
 make_test(test_list, program_target, '0', time_file)
 yield_table(time_file, 'Thread')
 
-#When the part of the program that apply blur with process be ready, descomment the code below
+#When the part of the program that apply blur with processes be ready, descomment the code below
 '''
 make_test(test_list, program_target, '1', time_file)
 yield_table(time_file, 'Process')
