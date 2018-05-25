@@ -54,7 +54,7 @@ file.close()
 system('rm -f ' + log_file)
 
 planilha = open('threading.csv', 'w')
-planilha.write('Test,User [s],Real [s],System [s],CPU\n')
+planilha.write('Test,Real [s],User [s],System [s],CPU\n')
 j = 0
 for i in range(0, len(lines), 2):
   datas = yield_datas(lines[i])
