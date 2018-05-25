@@ -12,6 +12,6 @@ typedef struct {
 imagem abrir_imagem(char *nome_do_arquivo);
 void salvar_imagem(char *nome_do_arquivo, imagem *I);
 void liberar_imagem(imagem *i);
-void aply_blur(imagem *img, int N, unsigned int i, unsigned int j, imagem *output);
+void apply_blur(imagem *img, int N, unsigned int i, unsigned int j, imagem *output);/*Applies blur filter on pixel specified by i and j of area N*/
 
 #endif

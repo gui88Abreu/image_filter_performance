@@ -6,7 +6,7 @@ void *worker(void *arg){
   int width = buffer->input->width, height = buffer->input->height;
 
   while(1){
-    /* Primeira area critica de memoria: Encontra uma tarefa ainda nao realizada*/
+    /*Memory critical area: Find a task not accomplished*/
     pthread_mutex_lock(&key);
     while(i < height){
       while(j < width && buffer->pixel[i*width + j] == 1)
@@ -16,18 +16,18 @@ void *worker(void *arg){
       i+=1;
     }
     
-    /* encerra thread caso nao haja mais tarefas a ser realizadas*/
+    /* There is no more task to be accomplished*/
     if (i >= height && j >= width){
       pthread_mutex_unlock(&key);
       break;
     }
 
-    /* marca tarefa como realizada*/
+    /* Mark task as accomplished*/
     buffer->pixel[i*width + j] = 1;
     pthread_mutex_unlock(&key);
 
-    /* realiza tarefa*/
-    aply_blur(buffer->input, buffer->N_blur, i, j, buffer->output);
+    /* Accomplish task*/
+    apply_blur(buffer->input, buffer->N_blur, i, j, buffer->output);
     if (j == width)
       j = 0;
   }

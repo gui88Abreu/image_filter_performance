@@ -6,8 +6,8 @@
 #define N 10
 #define N_THREADS 4
 
-void initialize_img(imagem *, unsigned int, unsigned int);
-void threading_method(imagem *, imagem *);
+void initialize_img(imagem *, unsigned int, unsigned int);/*Set up output image*/
+void threading_method(imagem *, imagem *);/*Execute Threading Method*/
 
 int main(int argc, char *argv[]){
   imagem img, output_img;
@@ -31,6 +31,7 @@ int main(int argc, char *argv[]){
   img = abrir_imagem(input);
   initialize_img(&output_img, img.width, img.height);
 
+  /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0)
     threading_method(&img, &output_img);
 
@@ -45,7 +46,10 @@ void threading_method(imagem *img, imagem *output_img){
   pthread_t thread[N_THREADS];
   char *tasks;
 
+  /*Task matrix*/
   tasks = (char *)calloc(img->width*img->height, sizeof(char));
+  
+  /*Boot up Thread Workers*/
   for (int i = 0; i < N_THREADS; i++) {
     buffer[i].input = img;
     buffer[i].output = output_img;
@@ -54,7 +58,7 @@ void threading_method(imagem *img, imagem *output_img){
     pthread_create(&(thread[i]), NULL, worker, &(buffer[i]));
   }
 
-  /* Espera pelo fim das N_THREADS threads que estao sendo executadas*/
+  /* Wait for threads execution*/
   for(int i = 0; i < N_THREADS; i++){
     pthread_join(thread[i], NULL);
   }

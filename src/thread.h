@@ -15,6 +15,6 @@ typedef struct{
 
 pthread_mutex_t key; /*chave utilizada para travar as threads quando for necessario*/
 
-void *worker(void *);
+void *worker(void *);/*Thread function that actually executes blur filter*/
 
 #endif
