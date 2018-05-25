@@ -3,20 +3,30 @@
 from os import system
 import sys
 
-import re
+def yield_table(time_file, Name):
+  file = open(time_file, 'r')
 
-def yield_datas(line):
-  user, sys, real, cpu, line = line.split(' ', 4)
+  line = file.readlines()
 
-  regex = re.compile('[0-9]+[.][0-9]+')
-  user = regex.findall(user)
-  sys = regex.findall(sys)
-  real = regex.findall(real)
+  system('rm -f ' + time_file)
 
-  regex = re.compile('[0-9]+')
-  cpu = regex.findall(cpu)
+  planilha = open('Test_Result.csv', 'a')
+  planilha.write(Name + '\n')
+  planilha.write('Test,Usr time[s],Real time[s]\n')
+  j = 0
+  for i in range(2, len(line), 3):
+    planilha.write(test_list[j] + ',' + line[i])
+    j += 1
+  planilha.write('\n')
+  planilha.close()
 
-  return (real[0], user[0], sys[0], cpu[0])
+def make_test(test_list, program_target, mode, time_file):
+  for i in range(len(test_list)):
+    test_list[i] = test_list[i].replace('\n', '')
+    print(60*'-')
+    print('Test Image: ' + test_list[i])
+    system('./'+program_target + ' ' + test_list[i] + ' ' + mode + ' >>' + time_file)
+  print(60*'-')
 
 if len(sys.argv) != 2:
   quit()  
@@ -24,6 +34,7 @@ if len(sys.argv) != 2:
 images_directory = "images"
 program_target = sys.argv[1]
 temp_file = "temp"
+time_file = "time"
 
 system('ls ' + images_directory + '>' + temp_file)
 
@@ -35,29 +46,11 @@ system('rm -f ' + temp_file)
 if len(test_list) == 0:
   quit('There is no test files')
 
-log_file = "log.lg"
-for i in range(len(test_list)):
-  test_list[i] = test_list[i].replace('\n', '')
-  print(60*'-')
-  print('Test Image: ' + test_list[i])
-  system('/usr/bin/time -o '+ log_file + ' --append ./'+program_target + ' ' + test_list[i] + ' 0')
-print(60*'-')
-file = open(log_file, 'r')
+make_test(test_list, program_target, '0', time_file)
+yield_table(time_file, 'Thread')
 
-lines = []
-line = file.readline()
-while line:
-  lines.append(line)
-  line = file.readline()
-file.close()
-
-system('rm -f ' + log_file)
-
-planilha = open('threading.csv', 'w')
-planilha.write('Test,Real [s],User [s],System [s],CPU\n')
-j = 0
-for i in range(0, len(lines), 2):
-  datas = yield_datas(lines[i])
-  planilha.write(test_list[j] + ',' + datas[0] + ',' + datas[1] + ',' + datas[2] + ',' + datas[3] + '%\n')
-  j += 1
-planilha.close()
+#When the part of the program that apply blur with process be ready, descomment the code below
+'''
+make_test(test_list, program_target, '1', time_file)
+yield_table(time_file, 'Process')
+'''

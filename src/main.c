@@ -1,5 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
+
+#include <time.h>
+#include <sys/time.h>
+
 #include "imageprocessing.h"
 #include "thread.h"
 
@@ -13,6 +17,9 @@ int main(int argc, char *argv[]){
   imagem img, output_img;
   char output[50] = "filtered_images/";
   char input[50] = "images/";
+
+  clock_t t_0, t; /*It will get usr time*/
+  struct timeval rt0, rt1, drt;/*They will get real time*/
 
   if (argc < 3){
     printf("-----------------------------\n");
@@ -31,13 +38,20 @@ int main(int argc, char *argv[]){
   img = abrir_imagem(input);
   initialize_img(&output_img, img.width, img.height);
 
+  gettimeofday(&rt0, NULL);
+  t_0 = clock();
   /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0)
     threading_method(&img, &output_img);
+  t = clock();
+  gettimeofday(&rt1, NULL);
 
   salvar_imagem(output, &output_img);
   liberar_imagem(&img);
   liberar_imagem(&output_img);
+
+  timersub(&rt1, &rt0, &drt);
+  printf("%f,%ld.%ld\n", (double)(t - t_0)/CLOCKS_PER_SEC, drt.tv_sec, drt.tv_usec);  
   return 0;
 }
 
