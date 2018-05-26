@@ -40,10 +40,12 @@ int main(int argc, char *argv[]){
 
   gettimeofday(&rt0, NULL);
   t_0 = clock();
+  
   /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0)
     threading_method(&img, &output_img);
   t = clock();
+  
   gettimeofday(&rt1, NULL);
 
   salvar_imagem(output, &output_img);
