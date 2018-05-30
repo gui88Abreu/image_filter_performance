@@ -14,10 +14,10 @@
 
 void initialize_img(imagem *, unsigned int, unsigned int);/*Set up output image*/
 void threading_method(imagem *, imagem *);/*Execute Threading Method*/
-void process_method(imagem *, imagem*); /*Execute Process Method*/
+void process_method(imagem *, char *); /*Execute Process Method*/
 
 int main(int argc, char *argv[]){
-  imagem img, output_img;
+  imagem img, output_img, *img2;
   char output[50] = "filtered_images/";
   char input[50] = "images/";
 
@@ -39,26 +39,29 @@ int main(int argc, char *argv[]){
   strcat(output, argv[1]);
 
   img = abrir_imagem(input);
-  initialize_img(&output_img, img.width, img.height);
 
   gettimeofday(&rt0, NULL);
   t_0 = clock();
   
   /*Execute Blur filter with Threads*/
-  if (strcmp(argv[2], "0") == 0)
+  if (strcmp(argv[2], "0") == 0){
+    initialize_img(&output_img, img.width, img.height);
     threading_method(&img, &output_img);
-  else if (strcmp(argv[2], "1") == 0)
-    process_method(&img, &output_img);
+    salvar_imagem(output, &output_img);
+    liberar_imagem(&output_img);
+  }
+  else if (strcmp(argv[2], "1") == 0){
+    process_method(&img, output);
+  }
   else{
-    printf("That is not an option\n");
+    printf("The third argument is not a valid option\n");
     exit(EXIT_SUCCESS);
   }
+
   t = clock();
   gettimeofday(&rt1, NULL);
 
-  salvar_imagem(output, &output_img);
   liberar_imagem(&img);
-  liberar_imagem(&output_img);
 
   timersub(&rt1, &rt0, &drt);
   printf("%f,%ld.%ld\n", (double)(t - t_0)/CLOCKS_PER_SEC, drt.tv_sec, drt.tv_usec);  
@@ -91,25 +94,28 @@ void threading_method(imagem *img, imagem *output_img){
   return;
 }
 
-void process_method(imagem *img, imagem *output_img){
+void process_method(imagem *img, char *output_file){
   // criando variaveis 
   int segment_sem,shared;
   sem_t *sem;
   pid_t pid[N_PROCESS];
-  
-  // task matrix
-  char *tasks;
 
   /* Defini flags de protecao e visibilidade de memoria */
   int protection = PROT_READ | PROT_WRITE;
   int visibility = MAP_SHARED | MAP_ANON;
 
   /* Cria area de memoria compartilhada */
-  tasks = (char *)mmap(NULL, img->width*img->height*sizeof(int), protection, visibility, 0, 0);
+  char *tasks = (char *)mmap(NULL, img->width*img->height*sizeof(int), protection, visibility, 0, 0);
+  imagem *output_img = (imagem *)mmap(NULL, sizeof(imagem), protection, visibility, 0, 0);
+  output_img->width = img->width;
+  output_img->height = img->height;
+  output_img->r = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
+  output_img->g = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
+  output_img->b = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
 
   /*Reset tasks*/
-  for(int i = 0; i< img->height; i++){
-    for(int j = 0; j< img->width; j++){
+  for(unsigned int i = 0; i < img->height; i++){
+    for(unsigned int j = 0; j < img->width; j++){
       tasks[i*img->width + j] = 0;
     }
   }
@@ -118,14 +124,10 @@ void process_method(imagem *img, imagem *output_img){
   sem = (sem_t *)shmat(segment_sem, NULL, 0); // address para variavel
   sem_init(sem, 1, 1); // inicializa semaphore compartilhado em multiprocessos e com valor inicial 1
   
-  /*
-  shared = shmget(IPC_PRIVATE, sizeof(Buffer), IPC_CREAT | SHM_W | SHM_R);// cria variavel compartilhado pelos processos
-  buf = (bf )shmat(shared, NULL, 0); // address para variavel*/
-
-  for( int k = 0; k <N_PROCESS;k++){// criando 4 processos
+  for( int k = 0; k < N_PROCESS; k++){// criando 4 processos
     pid[k] = fork();
     if(pid[k] == 0){// esta no processo filho
-      int i = 0, j = 0, cont =0;
+      int i = 0, j = 0;
       int width = img->width, height = img->height;
       
       while(1){
@@ -145,7 +147,6 @@ void process_method(imagem *img, imagem *output_img){
           break;
         }
 
-        cont += 1;
         /* Mark task as accomplished*/
         tasks[i*width + j] = 1;
         sem_post(sem);
@@ -155,8 +156,7 @@ void process_method(imagem *img, imagem *output_img){
         if (j == width)
           j = 0;
       }
-
-      printf("cont = %i\n", cont);
+      
       /*Terminate This Process*/
       exit(EXIT_SUCCESS);
     }
@@ -168,6 +168,7 @@ void process_method(imagem *img, imagem *output_img){
     sem_destroy(sem);
   }
 
+  salvar_imagem(output_file, output_img);
   shmdt(sem);
   return;
 }
