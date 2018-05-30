@@ -57,11 +57,12 @@ def make_test(test_list, program_target, mode, time_file):
 ###########################################################################################################
 ###########################################################################################################
 
-# Here begin the main
+# Here is the beginning of the main
 
 if len(sys.argv) != 2:
   quit('It must be passed as argument just the program name that will be tested')
 
+#File Names
 images_directory = "images"
 program_target = sys.argv[1]
 temp_file = "temp"
