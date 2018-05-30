@@ -6,12 +6,15 @@
 
 #include "imageprocessing.h"
 #include "thread.h"
+#include "process.h"
 
 #define N 10
 #define N_THREADS 4
+#define N_PROCESS 4
 
 void initialize_img(imagem *, unsigned int, unsigned int);/*Set up output image*/
 void threading_method(imagem *, imagem *);/*Execute Threading Method*/
+void process_method(imagem *, imagem*); /*Execute Process Method*/
 
 int main(int argc, char *argv[]){
   imagem img, output_img;
@@ -44,8 +47,13 @@ int main(int argc, char *argv[]){
   /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0)
     threading_method(&img, &output_img);
+  else if (strcmp(argv[2], "1") == 0)
+    process_method(&img, &output_img);
+  else{
+    printf("That is not an option\n");
+    exit(EXIT_SUCCESS);
+  }
   t = clock();
-  
   gettimeofday(&rt1, NULL);
 
   salvar_imagem(output, &output_img);
@@ -80,6 +88,87 @@ void threading_method(imagem *img, imagem *output_img){
   }
 
   free(tasks);
+  return;
+}
+
+void process_method(imagem *img, imagem *output_img){
+  // criando variaveis 
+  int segment_sem,shared;
+  sem_t *sem;
+  pid_t pid[N_PROCESS];
+  
+  // task matrix
+  char *tasks;
+
+  /* Defini flags de protecao e visibilidade de memoria */
+  int protection = PROT_READ | PROT_WRITE;
+  int visibility = MAP_SHARED | MAP_ANON;
+
+  /* Cria area de memoria compartilhada */
+  tasks = (char *)mmap(NULL, img->width*img->height*sizeof(int), protection, visibility, 0, 0);
+
+  /*Reset tasks*/
+  for(int i = 0; i< img->height; i++){
+    for(int j = 0; j< img->width; j++){
+      tasks[i*img->width + j] = 0;
+    }
+  }
+  
+  segment_sem = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | SHM_W | SHM_R);// cria semaforo compartilhado pelos processos
+  sem = (sem_t *)shmat(segment_sem, NULL, 0); // address para variavel
+  sem_init(sem, 1, 1); // inicializa semaphore compartilhado em multiprocessos e com valor inicial 1
+  
+  /*
+  shared = shmget(IPC_PRIVATE, sizeof(Buffer), IPC_CREAT | SHM_W | SHM_R);// cria variavel compartilhado pelos processos
+  buf = (bf )shmat(shared, NULL, 0); // address para variavel*/
+
+  for( int k = 0; k <N_PROCESS;k++){// criando 4 processos
+    pid[k] = fork();
+    if(pid[k] == 0){// esta no processo filho
+      int i = 0, j = 0, cont =0;
+      int width = img->width, height = img->height;
+      
+      while(1){
+      /*Memory critical area: Find a task not accomplished*/
+        sem_wait(sem);
+        while(i < height){
+          while(j < width && tasks[i*width + j] == 1)
+            j+=1;
+          if (tasks[i*width + j] == 0)
+            break;
+          i+=1;
+        }
+        
+        /* There is no more task to be accomplished*/
+        if (i >= height && j >= width){
+          sem_post(sem);
+          break;
+        }
+
+        cont += 1;
+        /* Mark task as accomplished*/
+        tasks[i*width + j] = 1;
+        sem_post(sem);
+
+        /* Accomplish task*/
+        apply_blur(img, N, i, j, output_img);
+        if (j == width)
+          j = 0;
+      }
+
+      printf("cont = %i\n", cont);
+      /*Terminate This Process*/
+      exit(EXIT_SUCCESS);
+    }
+  }
+  
+  // processo pai
+  for(int k = 0; k < N_PROCESS; k++){// espera processos acabarem
+    waitpid(pid[k], NULL, 0);
+    sem_destroy(sem);
+  }
+
+  shmdt(sem);
   return;
 }
 
