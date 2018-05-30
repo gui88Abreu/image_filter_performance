@@ -5,13 +5,14 @@
 
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
+import re #RegEx
 
 ###########################################################################################################
 ###########################################################################################################
 
 # Here are the function statements
 
-def yield_table(time_file, Name):
+def yield_table(time_file, Name, test_list, mode):
   ''' 
   Yield a csv table with datas that were colected and stored on time_file.
   String *Name must have something about the datas, example: Thread Method or just Thread.
@@ -25,13 +26,18 @@ def yield_table(time_file, Name):
   system('rm -f ' + time_file)
 
   # Actually yield a csv table
-  planilha = open('Test_Result.csv', 'a')
+  planilha = open('Test_Result.csv', mode)
   planilha.write(Name + '\n')
   planilha.write('Test,Usr time[s],Real time[s]\n')
+  
+  regex = re.compile("[0-9]+[.][0-9]+")
+
   j = 0
-  for i in range(2, len(line), 3):
-    planilha.write(test_list[j] + ',' + line[i])
-    j += 1
+  for l in line:
+    result = regex.findall(l)
+    if len(result) == 2:
+      planilha.write(test_list[j] + ',' + l)
+      j += 1
   planilha.write('\n')
   planilha.close()
 
@@ -75,15 +81,15 @@ system('rm -f ' + temp_file)
 if len(test_list) == 0:
   quit('There is no test files')
 
-#Runs program_target with threads and store the results on time_file
+#Run program_target with threads and store the results on time_file
+print("Thread Testing")
 make_test(test_list, program_target, '0', time_file)
-yield_table(time_file, 'Thread')
+yield_table(time_file, 'Thread', test_list, 'w')
 
-#When the part of the program that apply blur with processes be ready, descomment the code below
-
-#Runs program_target with processes and store the results on time_file
+#Run program_target with processes and store the results on time_file
+print("Process Testing")
 make_test(test_list, program_target, '1', time_file)
-yield_table(time_file, 'Process')
+yield_table(time_file, 'Process', test_list, 'a')
 
 ###########################################################################################################
 ###########################################################################################################
