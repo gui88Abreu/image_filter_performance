@@ -80,10 +80,10 @@ make_test(test_list, program_target, '0', time_file)
 yield_table(time_file, 'Thread')
 
 #When the part of the program that apply blur with processes be ready, descomment the code below
-'''
+
 #Runs program_target with processes and store the results on time_file
 make_test(test_list, program_target, '1', time_file)
 yield_table(time_file, 'Process')
-'''
+
 ###########################################################################################################
 ###########################################################################################################
