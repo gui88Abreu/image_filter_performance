@@ -2,6 +2,7 @@
 CC = gcc
 CFLAGS = -Wextra -lpthread
 FREEIMAGEFLAGS = -lfreeimage
+CSVFILE = Test_Result.csv
 DIR = src
 DIR_IMAGES = filtered_images
 TARGET = main
@@ -28,5 +29,5 @@ test:all
 
 clean:
 	$(RM) ./$(TARGET)
-	$(RM) $(DIR)/*.o ./*.csv
+	$(RM) $(DIR)/*.o ./$(CSVFILE)
 	$(RM) $(DIR_IMAGES)/*.jpg $(DIR_IMAGES)/*.jpeg
