@@ -6,6 +6,7 @@
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
 import re #RegEx
+from time import sleep
 
 ###########################################################################################################
 ###########################################################################################################
@@ -46,7 +47,7 @@ def make_test(test_list, program_target, mode, time_file):
   It does test program_target with the test_list and store the results on time_file.
   *mode must be assigned with '0' to execute program with threads or with '1' to execute with processes.
   '''
-
+  print(60*'-')
   for i in range(len(test_list)):
     test_list[i] = test_list[i].replace('\n', '')
     print(60*'-')
@@ -61,6 +62,27 @@ def make_test(test_list, program_target, mode, time_file):
 
 if len(sys.argv) != 2:
   quit('It must be passed as argument just the program name that will be tested')
+
+print(80*'-')
+print(80*'-')
+print('All tests will be done with a blur length of 10.')
+print('After that, it will be generated an csv table.')
+print('The results that will be taken from the tests will be there.')
+print('First will be executed tests with 4 threads.')
+print('Then will be executed tests with 4 processes.')
+print('For bests results, execute this script 2 times and ignore the first.')
+print(80*'-')
+print(80*'-')
+
+while 1:
+  choice  = input('Just type (Y) if you understood or (N) otherwise: ')
+  if choice == "N":
+    quit()
+  if choice == "Y":
+    break
+
+print(80*'-')
+print(80*'-')
 
 #File Names
 images_directory = "images"
