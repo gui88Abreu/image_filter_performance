@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "imageprocessing.h"
 
-void apply_blur(imagem *img, int N, unsigned int i, unsigned int j, imagem *output){
+void apply_blur(imagem *img, int N, float Area,unsigned int i, unsigned int j, imagem *output){
   int Yi = i-N, Yf = i+N;
   int Xi = j-N, Xf = j+N;
   float r, g , b;
@@ -22,12 +22,9 @@ void apply_blur(imagem *img, int N, unsigned int i, unsigned int j, imagem *outp
     }
   }
 
-  N = 2*N + 1;
-  N *= N;
-
   /*Store new values on output image*/
-  output->r[i*output->width + j] = r/(float)N;
-  output->g[i*output->width + j] = g/(float)N;
-  output->b[i*output->width + j] = b/(float)N;
+  output->r[i*output->width + j] = r/Area;
+  output->g[i*output->width + j] = g/Area;
+  output->b[i*output->width + j] = b/Area;
   return; 
 }

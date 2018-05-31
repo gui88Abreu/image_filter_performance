@@ -11,6 +11,7 @@ typedef struct{
   imagem *output;
   char *pixel;
   int N_blur;
+  float Area;
 }Buffer, *bf;
 
 pthread_mutex_t key; /*chave utilizada para travar as threads quando for necessario*/

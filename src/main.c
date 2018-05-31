@@ -35,20 +35,22 @@ int main(int argc, char *argv[]){
     exit(EXIT_SUCCESS);
   }
 
+  /*Adjust the image destiny*/
   strcat(input, argv[1]);
   strcat(output, argv[1]);
 
+  /*Open image and initialize output image*/
   img = abrir_imagem(input);
+  initialize_img(&output_img, img.width, img.height);
 
+  /*Get time before the beginning of the processing*/
   gettimeofday(&rt0, NULL);
   t_0 = clock();
   
   /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0){
-    initialize_img(&output_img, img.width, img.height);
     threading_method(&img, &output_img);
-    salvar_imagem(output, &output_img);
-    liberar_imagem(&output_img);
+    salvar_imagem(output, &output_img); /*Save image here to be fair enougth with process method*/
   }
   else if (strcmp(argv[2], "1") == 0){
     process_method(&img, output);
@@ -58,10 +60,13 @@ int main(int argc, char *argv[]){
     exit(EXIT_SUCCESS);
   }
 
+  /*Get the time after the end of the whole processing*/
   t = clock();
   gettimeofday(&rt1, NULL);
 
+  /*Free allocated memory*/
   liberar_imagem(&img);
+  liberar_imagem(&output_img);
 
   timersub(&rt1, &rt0, &drt);
   printf("%f,%ld.%ld\n", (double)(t - t_0)/CLOCKS_PER_SEC, drt.tv_sec, drt.tv_usec);  
@@ -69,20 +74,29 @@ int main(int argc, char *argv[]){
 }
 
 void threading_method(imagem *img, imagem *output_img){
-  Buffer buffer[N_THREADS];
+  Buffer buffer;
   pthread_t thread[N_THREADS];
   char *tasks;
+  float Area;
 
   /*Task matrix*/
   tasks = (char *)calloc(img->width*img->height, sizeof(char));
   
+  /*Calculate area where will be applied blur filter*/
+  Area = 2*N + 1;
+  Area *= Area;
+
+  /*Put data on the buffer*/
+  buffer.input = img;
+  buffer.output = output_img;
+  buffer.N_blur = N;
+  buffer.Area = Area;
+  buffer.pixel = tasks;
+
+
   /*Boot up Thread Workers*/
   for (int i = 0; i < N_THREADS; i++) {
-    buffer[i].input = img;
-    buffer[i].output = output_img;
-    buffer[i].N_blur = N;
-    buffer[i].pixel = tasks;
-    pthread_create(&(thread[i]), NULL, worker, &(buffer[i]));
+    pthread_create(&(thread[i]), NULL, worker, &(buffer));
   }
 
   /* Wait for threads execution*/
@@ -95,20 +109,25 @@ void threading_method(imagem *img, imagem *output_img){
 }
 
 void process_method(imagem *img, char *output_file){
-  // criando variaveis 
   int segment_sem,shared;
   sem_t *sem;
   pid_t pid[N_PROCESS];
+  float Area;
 
-  /* Defini flags de protecao e visibilidade de memoria */
+  /*Calculate area where will be applied blur filter*/
+  Area = 2*N + 1;
+  Area *= Area;
+
+  /*Define flags of protection and visibility memory*/
   int protection = PROT_READ | PROT_WRITE;
   int visibility = MAP_SHARED | MAP_ANON;
 
-  /* Cria area de memoria compartilhada */
+  /*Create Shared Memory Area*/
   char *tasks = (char *)mmap(NULL, img->width*img->height*sizeof(int), protection, visibility, 0, 0);
   imagem *output_img = (imagem *)mmap(NULL, sizeof(imagem), protection, visibility, 0, 0);
-  output_img->width = img->width;
-  output_img->height = img->height;
+  output_img->width = img->width, output_img->height = img->height;
+  
+  /*Create Shared Memory Area for output image*/
   output_img->r = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
   output_img->g = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
   output_img->b = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
@@ -120,43 +139,18 @@ void process_method(imagem *img, char *output_file){
     }
   }
   
-  segment_sem = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | SHM_W | SHM_R);// cria semaforo compartilhado pelos processos
-  sem = (sem_t *)shmat(segment_sem, NULL, 0); // address para variavel
-  sem_init(sem, 1, 1); // inicializa semaphore compartilhado em multiprocessos e com valor inicial 1
+  /*Create semaphore to control Memory Critical Area*/
+  segment_sem = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | SHM_W | SHM_R);
+  sem = (sem_t *)shmat(segment_sem, NULL, 0);
+  sem_init(sem, 1, 1); // initialize semaphore
   
-  for( int k = 0; k < N_PROCESS; k++){// criando 4 processos
+  /*Create N_PROCESS processes*/
+  for( int k = 0; k < N_PROCESS; k++){
     pid[k] = fork();
-    if(pid[k] == 0){// esta no processo filho
-      int i = 0, j = 0;
-      int width = img->width, height = img->height;
-      
-      while(1){
-      /*Memory critical area: Find a task not accomplished*/
-        sem_wait(sem);
-        while(i < height){
-          while(j < width && tasks[i*width + j] == 1)
-            j+=1;
-          if (tasks[i*width + j] == 0)
-            break;
-          i+=1;
-        }
-        
-        /* There is no more task to be accomplished*/
-        if (i >= height && j >= width){
-          sem_post(sem);
-          break;
-        }
 
-        /* Mark task as accomplished*/
-        tasks[i*width + j] = 1;
-        sem_post(sem);
-
-        /* Accomplish task*/
-        apply_blur(img, N, i, j, output_img);
-        if (j == width)
-          j = 0;
-      }
-      
+    if(pid[k] == 0){
+      /*Call Function that make the processing*/
+      processing_worker(img, output_img, tasks, sem, img->width, img->height, N, Area);
       /*Terminate This Process*/
       exit(EXIT_SUCCESS);
     }

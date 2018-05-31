@@ -1,14 +1,7 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "imageprocessing.h"
-
-/*
-imagem abrir_imagem(char *nome_do_arquivo);
-void salvar_imagem(char *nome_do_arquivo);
-void liberar_imagem(imagem *i);
- */
 
 imagem abrir_imagem(char *nome_do_arquivo) {
   FIBITMAP *bitmapIn;

@@ -24,10 +24,12 @@ void *worker(void *arg){
 
     /* Mark task as accomplished*/
     buffer->pixel[i*width + j] = 1;
+    
+    /*Here ends the Memory critical area*/
     pthread_mutex_unlock(&key);
 
     /* Accomplish task*/
-    apply_blur(buffer->input, buffer->N_blur, i, j, buffer->output);
+    apply_blur(buffer->input, buffer->N_blur, buffer->Area, i, j, buffer->output);
     
     /* j must be assigned with 0 if it has transpassed the bound*/
     if (j == width)
