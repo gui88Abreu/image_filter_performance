@@ -29,14 +29,14 @@ def yield_table(time_file, Name, test_list, mode):
   # Actually yield a csv table
   planilha = open('Test_Result.csv', mode)
   planilha.write(Name + '\n')
-  planilha.write('Test,Usr time[s],Real time[s]\n')
+  planilha.write('Test,Width x Height,Real time[s]\n')
   
   regex = re.compile("[0-9]+[.][0-9]+")
 
   j = 0
   for l in line:
     result = regex.findall(l)
-    if len(result) == 2:
+    if len(result) == 1:
       planilha.write(test_list[j] + ',' + l)
       j += 1
   planilha.write('\n')
