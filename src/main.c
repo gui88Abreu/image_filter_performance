@@ -13,16 +13,16 @@
 #define N_PROCESS 4
 
 void initialize_img(imagem *, unsigned int, unsigned int);/*Set up output image*/
-void threading_method(imagem *, imagem *);/*Execute Threading Method*/
-void process_method(imagem *, char *); /*Execute Process Method*/
+void threading_method(imagem *, imagem *, long int*, long int*);/*Execute Threading Method*/
+void process_method(imagem *, char *, long int*, long int*); /*Execute Process Method*/
 
 int main(int argc, char *argv[]){
   imagem img, output_img, *img2;
   char output[50] = "filtered_images/";
   char input[50] = "images/";
 
-  clock_t t_0, t; /*It will get usr time*/
-  struct timeval rt0, rt1, drt;/*They will get real time*/
+  int width, height;
+  long int stime, utime;
 
   if (argc < 3){
     printf("-----------------------------\n");
@@ -43,41 +43,39 @@ int main(int argc, char *argv[]){
   img = abrir_imagem(input);
   initialize_img(&output_img, img.width, img.height);
 
-  /*Get time before the beginning of the processing*/
-  gettimeofday(&rt0, NULL);
-  t_0 = clock();
+  width = img.width, height = img.height; /*Image Dimension*/
   
   /*Execute Blur filter with Threads*/
   if (strcmp(argv[2], "0") == 0){
-    threading_method(&img, &output_img);
-    salvar_imagem(output, &output_img); /*Save image here to be fair enougth with process method*/
+    threading_method(&img, &output_img, &stime, &utime);
+    salvar_imagem(output, &output_img);
   }
   else if (strcmp(argv[2], "1") == 0){
-    process_method(&img, output);
+    process_method(&img, output, &stime, &utime);
   }
   else{
     printf("The third argument is not a valid option\n");
     exit(EXIT_SUCCESS);
   }
 
-  /*Get the time after the end of the whole processing*/
-  t = clock();
-  gettimeofday(&rt1, NULL);
-
   /*Free allocated memory*/
   liberar_imagem(&img);
   liberar_imagem(&output_img);
 
-  timersub(&rt1, &rt0, &drt);
-  printf("%f,%ld.%ld\n", (double)(t - t_0)/CLOCKS_PER_SEC, drt.tv_sec, drt.tv_usec);  
+  printf("%ix%i,%ld.%ld\n", width, height, stime, utime);  
   return 0;
 }
 
-void threading_method(imagem *img, imagem *output_img){
+void threading_method(imagem *img, imagem *output_img, long int *stime, long int *utime){
   Buffer buffer;
   pthread_t thread[N_THREADS];
   char *tasks;
   float Area;
+
+  struct timeval rt0, rt1, drt;/*They will get real time*/
+
+  /*Get time before the beginning of the processing*/
+  gettimeofday(&rt0, NULL);
 
   /*Task matrix*/
   tasks = (char *)calloc(img->width*img->height, sizeof(char));
@@ -105,14 +103,27 @@ void threading_method(imagem *img, imagem *output_img){
   }
 
   free(tasks);
+
+  /*Get the time after the end of the whole processing*/
+  gettimeofday(&rt1, NULL);
+
+  timersub(&rt1, &rt0, &drt);
+
+  *stime = drt.tv_sec,*utime = drt.tv_usec;
+
   return;
 }
 
-void process_method(imagem *img, char *output_file){
+void process_method(imagem *img, char *output_file, long int *stime, long int *utime){
   int segment_sem,shared;
   sem_t *sem;
   pid_t pid[N_PROCESS];
   float Area;
+
+  struct timeval rt0, rt1, drt;/*They will get real time*/
+
+  /*Get time before the beginning of the processing*/
+  gettimeofday(&rt0, NULL);
 
   /*Calculate area where will be applied blur filter*/
   Area = 2*N + 1;
@@ -161,9 +172,16 @@ void process_method(imagem *img, char *output_file){
     waitpid(pid[k], NULL, 0);
     sem_destroy(sem);
   }
+  shmdt(sem);
+
+  /*Get the time after the end of the whole processing*/
+  gettimeofday(&rt1, NULL);
+
+  timersub(&rt1, &rt0, &drt);
+
+  *stime = drt.tv_sec,*utime = drt.tv_usec;
 
   salvar_imagem(output_file, output_img);
-  shmdt(sem);
   return;
 }
 
