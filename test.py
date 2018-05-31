@@ -6,7 +6,6 @@
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
 import re #RegEx
-from time import sleep
 
 ###########################################################################################################
 ###########################################################################################################
