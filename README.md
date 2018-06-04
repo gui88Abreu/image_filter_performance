@@ -6,12 +6,12 @@ In order to execute the program you have to type the following command on comman
 
 - **FILE_NAME** must not include the file path, only the file name
 - **MODE** accept just two assigments:
-  '''
+  ```
   [0] execute main with threads
-  '''
-  '''
+  ```
+  ```
   [1] execute main with processes
-  '''
+  ```
 
 Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image.
 
