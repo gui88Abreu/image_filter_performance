@@ -13,7 +13,7 @@ In order to execute the program you have to type the following command on comman
   0 execute main with threads
   1 execute main with processes
   ```
-Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image. The images must be in the directory named as **images**, the output images will be there in the directory **filtered_images**.
+Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image. The images must be in the directory named as **images**, the output images will be saved in the directory **filtered_images**.
 
 ## Subsidiary Script
 In order to compare the performance of the program you are allowed to execute the Subsidiary Script **generate_datas.py**.
