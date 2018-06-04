@@ -13,7 +13,7 @@ Also you are allowed to execute it on all images with **make test**. It will be 
 filter in each image.
 
 # Compilation
-In order to compile files type **make** command line
+In order to compile files type **make** on command line
 
 # Subsidiary Script
 In order to compare the performance of the program you are allowed to execute the Subsidiary Script **generate_datas.py**.
