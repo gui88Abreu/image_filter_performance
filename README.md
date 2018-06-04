@@ -1,13 +1,13 @@
 ## Description
-The goal of this project is to compare the performance between multithread and multiprocess programs that apply blur filter on images. In order to accomplish this task was made 2 diferents functions that apply blur on image and it was counted the taken time in each case. The functions was implemented in a way that they are fair enougth with each other, otherwise this project had no meaning.
+The goal of this project is to compare the performance between multithread and multiprocess programs that apply blur filter on images. In order to accomplish this task, it was made 2 diferents functions that apply blur on image and it was counted the taken time in each case. The functions were implemented in a way that they are fair enougth with each other, otherwise this project had no meaning.
 
 ## Execution
 In order to execute the program you have to type the following command on command line: **./main FILE_NAME MODE**
 
 - **FILE_NAME** must not include the file path, only the file name
 - **MODE** accept just two assigments:
-  __0__ execute main with threads
-  __1__ execute main with processes
+  -- __0__ execute main with threads
+  -- __1__ execute main with processes
 
 Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image.
 
