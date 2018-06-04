@@ -65,7 +65,6 @@ images_directory = "images"
 program_target = sys.argv[1]
 temp_file = "temp"
 time_file = "time"
-amount = 50
 
 #Catch all file names in image_directory and store on temp_file
 system('ls ' + images_directory + '>' + temp_file)
@@ -90,8 +89,13 @@ print()
 
 choice = int(input('type here your choice: '))
 
-if choice < 0 or choice > len(test_list):
-  quit('Wrong Choice')
+if choice < 0 or choice >= len(test_list):
+  quit('Invalid Choice')
+
+amount = int(input('type here how many times you want it be tested: '))
+
+if amount < 1:
+  quit('Invalid Amount')
 
 print('\nThread Test')
 make_test(test_list, program_target, '0', time_file, choice, amount)
