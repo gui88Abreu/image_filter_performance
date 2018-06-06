@@ -130,7 +130,7 @@ void process_method(imagem *img, char *output_file, long int *stime, long int *u
   Area = 2*N + 1;
   Area *= Area;
 
-  /*Define flags of protection and visibility memory*/
+  /*Define flags of memory protection and visibility */
   int protection = PROT_READ | PROT_WRITE;
   int visibility = MAP_SHARED | MAP_ANON;
 
@@ -143,13 +143,6 @@ void process_method(imagem *img, char *output_file, long int *stime, long int *u
   output_img->r = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
   output_img->g = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
   output_img->b = (float*)mmap(NULL, sizeof(float)*img->width*img->height, protection, visibility, 0, 0);
-
-  /*Reset tasks*/
-  for(unsigned int i = 0; i < img->height; i++){
-    for(unsigned int j = 0; j < img->width; j++){
-      tasks[i*img->width + j] = 0;
-    }
-  }
   
   /*Create semaphore to control Memory Critical Area*/
   segment_sem = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | SHM_W | SHM_R);
