@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 ###########################################################################################################
 ###########################################################################################################
 
-# Here are the imports needed
+# Here are the needed imports
 
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
@@ -57,7 +59,7 @@ def make_test(test_list, program_target, mode, time_file):
 ###########################################################################################################
 ###########################################################################################################
 
-# Here is the beginning of the main
+# Here is the main
 
 if len(sys.argv) != 2:
   quit('It must be passed as argument just the program name that will be tested')
