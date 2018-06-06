@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     threading_method(&img, &output_img, &stime, &utime);
     salvar_imagem(output, &output_img);
   }
+  /*Execute Blur filter with Process*/
   else if (strcmp(argv[2], "1") == 0){
     process_method(&img, output, &stime, &utime);
   }
