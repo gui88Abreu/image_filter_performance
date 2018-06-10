@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Here are the imports needed
+# Here are the imports
 
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script

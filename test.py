@@ -3,7 +3,7 @@
 ###########################################################################################################
 ###########################################################################################################
 
-# Here are the needed imports
+# Here are the imports
 
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
