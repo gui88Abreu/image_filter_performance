@@ -16,7 +16,7 @@ def yield_table(time_file, Name, test_list, mode, test):
   Yield a csv table with datas that were colected and stored on time_file.
   String *Name must have something about the datas, example: Thread Method or just Thread.
   '''
-  #Store all datas yielded previously in make_test on a list
+  #Store on a list all datas yielded previously in make_test
   file = open(time_file, 'r')
   line = file.readlines()
   file.close()
