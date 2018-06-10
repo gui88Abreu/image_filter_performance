@@ -1,6 +1,4 @@
-###########################################################################################################
-###########################################################################################################
-
+#!/usr/bin/env python3
 # Here are the imports needed
 
 from os import system #execute commands on command line
@@ -59,6 +57,8 @@ def make_test(test_list, program_target, mode, time_file, test, N):
 
 # Here is the beginning of the main
 
+if len(sys.argv) != 2:
+  quit('It must be passed as argument just the program name that will be tested')
 
 #File Names
 images_directory = "images"
