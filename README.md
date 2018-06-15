@@ -12,7 +12,7 @@ In order to execute the program you have to type the following command on comman
   ```
   0 execute main with threads
   1 execute main with processes
- -1 execute main without parallelism
+  -1 execute main without parallelism
   ```
 Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image. The images must be in the directory named as **images**, the output images will be saved in the directory **filtered_images**.
 
