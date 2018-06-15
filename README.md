@@ -19,6 +19,6 @@ Also you are allowed to execute it on all images with **make test**. It will be 
 In order to compare the performance of the program you are allowed to execute the Subsidiary Script **generate_datas.py**.
 The following command execute it: **python3 generate_datas.py main**
 
-- It will be generate 2 csv tables named as __Thread_Method.csv__ and __Process_Method.csv__.
+- It will be generate 3 csv tables named as __Thread_Method.csv__, __Process_Method.csv__ and __Single_Processing__.
 - Don't forget to compile the files before to execute it.
 - The script allow you choose how many times you want to execute test.
