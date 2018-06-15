@@ -67,10 +67,11 @@ if len(sys.argv) != 2:
 print(80*'-')
 print(80*'-')
 print('All tests will be done with a blur length of 10.')
-print('After that, it will be generated an csv table.')
+print('After that, it will be generated a csv table.')
 print('The results that will be taken from the tests will be there.')
 print('First it will be executed tests with 4 threads.')
 print('Then it will be executed tests with 4 processes.')
+print('Finally it will be executed test with single processing, i.e, without parellelism.')
 print('For bests results, execute this script 2 times and ignore the first.')
 print(80*'-')
 print(80*'-')
@@ -114,6 +115,11 @@ yield_table(time_file, 'Thread', test_list, 'w')
 print("Process Testing")
 make_test(test_list, program_target, '1', time_file)
 yield_table(time_file, 'Process', test_list, 'a')
+
+#Run program_target with processes and store the results on time_file
+print("Single Processing Testing")
+make_test(test_list, program_target, '-1', time_file)
+yield_table(time_file, 'Single Processing', test_list, 'a')
 
 ###########################################################################################################
 ###########################################################################################################

@@ -106,5 +106,9 @@ print('Process Test')
 make_test(test_list, program_target, '1', time_file, choice, amount)
 yield_table(time_file, 'Process_Method', test_list, 'w', choice)
 
+print('Single Processing Test')
+make_test(test_list, program_target, '-1', time_file, choice, amount)
+yield_table(time_file, 'Single_Processing', test_list, 'w', choice)
+
 ###########################################################################################################
 ###########################################################################################################

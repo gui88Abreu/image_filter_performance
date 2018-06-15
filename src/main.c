@@ -7,6 +7,7 @@
 #include "imageprocessing.h"
 #include "thread.h"
 #include "process.h"
+#include "single_worker.h"
 
 #define N 10
 #define N_THREADS 4
@@ -53,6 +54,10 @@ int main(int argc, char *argv[]){
   /*Execute Blur filter with Process*/
   else if (strcmp(argv[2], "1") == 0){
     process_method(&img, output, &stime, &utime);
+  }
+  else if (strcmp(argv[2], "-1") == 0){
+    single_worker(&img, &output_img, width, height, N, &stime, &utime);
+    salvar_imagem(output, &output_img);
   }
   else{
     printf("The third argument is not a valid option\n");
