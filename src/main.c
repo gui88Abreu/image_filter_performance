@@ -9,9 +9,9 @@
 #include "process.h"
 #include "single_worker.h"
 
-#define N 10
-#define N_THREADS 4
-#define N_PROCESS 4
+int N;
+int N_THREADS;
+int N_PROCESS;
 
 void initialize_img(imagem *, unsigned int, unsigned int);/*Set up output image*/
 void threading_method(imagem *, imagem *, long int*, long int*);/*Execute Threading Method*/
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
   int width, height;
   long int stime, utime;
 
-  if (argc < 3){
+  if (argc < 4){
     printf("-----------------------------\n");
     printf("PROGRAM NEEDS MORE ARGUMENTS \n");
     printf("THE THIRD ARGUMENT NEEDS TO  \n");
@@ -35,6 +35,9 @@ int main(int argc, char *argv[]){
     printf("-----------------------------\n");
     exit(EXIT_SUCCESS);
   }
+  /*Catch the number of threads of the processor*/
+  N = atoi(argv[3]);
+  N_THREADS = N_PROCESS = atoi(argv[4]);
 
   /*Adjust the image destiny*/
   strcat(input, argv[1]);

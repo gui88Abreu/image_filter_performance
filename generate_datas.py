@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
-# Here are the imports
+#*********************************************************************************************************#
+                                              #***import librarys***#
 
 from os import system #execute commands on command line
 import sys #catch arguments from the command line that runs this script
 import re #RegEx
 
-###########################################################################################################
-###########################################################################################################
-
-# Here are the function statements
+#*********************************************************************************************************#
+                                              #***function statements***#
 
 def yield_table(time_file, Name, test_list, mode, test):
   ''' 
@@ -38,7 +37,7 @@ def yield_table(time_file, Name, test_list, mode, test):
       j += 1
   planilha.close()
 
-def make_test(test_list, program_target, mode, time_file, test, N):
+def make_test(test_list, program_target, mode, N_blur, cpu, time_file, test, N):
   '''
   It does test program_target with the test_list and store the results on time_file.
   *mode must be assigned with '0' to execute program with threads or with '1' to execute with processes.
@@ -49,14 +48,12 @@ def make_test(test_list, program_target, mode, time_file, test, N):
   while i <= N:
     print(60*'-')
     print('Executing Test '+ str(i) + '...')
-    system('./'+program_target + ' ' + file + ' ' + mode + ' >>' + time_file)
+    system('./'+program_target + ' ' + file + ' ' + mode + ' ' + N_blur + ' ' + cpu + ' >>' + time_file)
     i+=1
   print(60*'-')
 
-###########################################################################################################
-###########################################################################################################
-
-# Here is the beginning of the main
+#*********************************************************************************************************#
+                                              #***main***#
 
 if len(sys.argv) != 2:
   quit('It must be passed as argument just the program name that will be tested')
@@ -66,6 +63,13 @@ images_directory = "images"
 program_target = sys.argv[1]
 temp_file = "temp"
 time_file = "time"
+N_blur = '10'
+
+#Catch the number of available threads of the processor
+system('grep -c cpu[0-9] /proc/stat >>' + temp_file)
+fl = open(temp_file,'r')
+cpu = fl.readline().replace('\n','')
+fl.close()
 
 #Catch all file names in image_directory and store on temp_file
 system('ls ' + images_directory + '>' + temp_file)
@@ -99,16 +103,13 @@ if amount < 1:
   quit('Invalid Amount')
 
 print('\nThread Test')
-make_test(test_list, program_target, '0', time_file, choice, amount)
+make_test(test_list, program_target, '0', N_blur, cpu, time_file, choice, amount)
 yield_table(time_file, 'Thread_Method', test_list, 'w', choice)
 
 print('Process Test')
-make_test(test_list, program_target, '1', time_file, choice, amount)
+make_test(test_list, program_target, '1', N_blur, cpu,time_file, choice, amount)
 yield_table(time_file, 'Process_Method', test_list, 'w', choice)
 
 print('Single Processing Test')
-make_test(test_list, program_target, '-1', time_file, choice, amount)
+make_test(test_list, program_target, '-1', N_blur, cpu, time_file, choice, amount)
 yield_table(time_file, 'Single_Processing', test_list, 'w', choice)
-
-###########################################################################################################
-###########################################################################################################
