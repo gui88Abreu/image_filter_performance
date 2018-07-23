@@ -60,28 +60,6 @@ def make_test(test_list, program_target, mode, N_blur, cpu, time_file):
 if len(sys.argv) != 2:
   quit('It must be passed as argument just the program name that will be tested')
 
-print(80*'-')
-print(80*'-')
-print('All tests will be done with a blur length of 10.')
-print('After that, it will be generated a csv table.')
-print('The results that will be taken from the tests will be there.')
-print('First it will be executed tests with 4 threads.')
-print('Then it will be executed tests with 4 processes.')
-print('Finally it will be executed test with single processing, i.e, without parallelism.')
-print('For bests results, execute this script 2 times and ignore the first.')
-print(80*'-')
-print(80*'-')
-
-while 1:
-  choice  = input('Just type (Y) if you understood or (N) otherwise: ')
-  if choice == "N":
-    quit()
-  if choice == "Y":
-    break
-
-print(80*'-')
-print(80*'-')
-
 #File Names
 images_directory = "images"
 program_target = sys.argv[1]
@@ -94,6 +72,29 @@ system('grep -c cpu[0-9] /proc/stat >>' + temp_file)
 fl = open(temp_file,'r')
 cpu = fl.readline().replace('\n','')
 fl.close()
+
+print(80*'-')
+print(80*'-')
+print('All tests will be done with a blur length of 10.')
+print('After that, it will be generated a csv table.')
+print('The results that will be taken from the tests will be there.')
+print('First it will be executed tests with %s threads.' %cpu)
+print('Then it will be executed tests with %s processes.' %cpu)
+print('Finally it will be executed test with single processing, i.e, without parallelism.')
+print('For bests results, execute this script 2 times and ignore the first.')
+print(80*'-')
+print(80*'-')
+
+while 1:
+  choice  = input('Just type (Y) if you understood or (N) otherwise: ')
+  if choice == "N":
+    system('rm -f ' + temp_file)
+    quit()
+  if choice == "Y":
+    break
+
+print(80*'-')
+print(80*'-')
 
 #Catch all file names in image_directory and store on temp_file
 system('ls ' + images_directory + '>' + temp_file)
