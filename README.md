@@ -16,6 +16,8 @@ In order to execute the program you have to type the following command on comman
   ```
 Also you are allowed to execute it on all images with **make test**. It will be generate a csv table with the taken time to execute blur filter in each image. The images must be in the directory named as **images**, the output images will be saved in the directory **filtered_images**.
 
+Note: The program will run the maximum of threads available in your system. Make sure the all of them be active.
+
 ## Subsidiary Script
 In order to compare the performance of the program you are allowed to execute the Subsidiary Script **generate_datas.py**.
 The following command execute it: **python3 generate_datas.py main**
