@@ -55,12 +55,9 @@ def make_test(test_list, program_target, mode, N_blur, cpu, time_file, test, N):
 #*********************************************************************************************************#
                                               #***main***#
 
-if len(sys.argv) != 2:
-  quit('It must be passed as argument just the program name that will be tested')
-
 #File Names
 images_directory = "images"
-program_target = sys.argv[1]
+program_target = "main"
 temp_file = "temp"
 time_file = "time"
 N_blur = '10'

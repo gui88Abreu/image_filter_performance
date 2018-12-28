@@ -20,7 +20,7 @@ Note: The program will run the maximum of threads available in your system. Make
 
 ## Subsidiary Script
 In order to compare the performance of the program you are allowed to execute the Subsidiary Script **generate_datas.py**.
-The following command execute it: **python3 generate_datas.py main**
+The following command execute it: **python3 generate_datas.py**
 
 - It will be generate 3 csv tables named as __Thread_Method.csv__, __Process_Method.csv__ and __Single_Processing__.
 - Don't forget to compile the files before to execute it.
